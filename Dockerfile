@@ -25,16 +25,3 @@ COPY --from=builder /workspace/bin/workload-controller .
 USER 65532:65532
 
 ENTRYPOINT ["/workload-controller"]
-
-
-LABEL \
-    com.redhat.component="openshift-syncer-service-rhel9-container" \
-    cpe="cpe:/a:redhat:openshift_pipelines:nightly::el9" \
-    description="Red Hat OpenShift Pipelines syncer-service syncer-service" \
-    io.k8s.description="Red Hat OpenShift Pipelines syncer-service syncer-service" \
-    io.k8s.display-name="Red Hat OpenShift Pipelines syncer-service syncer-service" \
-    io.openshift.tags="tekton,openshift,syncer-service,syncer-service" \
-    maintainer="pipelines-extcomm@redhat.com" \
-    name="openshift-pipelines/syncer-service-rhel9" \
-    summary="Red Hat OpenShift Pipelines syncer-service syncer-service" \
-    version="vnightly"
