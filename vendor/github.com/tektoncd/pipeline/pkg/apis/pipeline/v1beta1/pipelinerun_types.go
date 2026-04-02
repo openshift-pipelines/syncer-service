@@ -83,11 +83,6 @@ func (pr *PipelineRun) HasStarted() bool {
 	return pr.Status.StartTime != nil && !pr.Status.StartTime.IsZero()
 }
 
-// IsSuccessful returns true if the PipelineRun's's status indicates that it has succeeded.
-func (pr *PipelineRun) IsSuccessful() bool {
-	return pr != nil && pr.Status.GetCondition(apis.ConditionSucceeded).IsTrue()
-}
-
 // IsCancelled returns true if the PipelineRun's spec status is set to Cancelled state
 func (pr *PipelineRun) IsCancelled() bool {
 	return pr.Spec.Status == PipelineRunSpecStatusCancelled
@@ -305,12 +300,6 @@ type PipelineRunSpec struct {
 	// +optional
 	// +listType=atomic
 	TaskRunSpecs []PipelineTaskRunSpec `json:"taskRunSpecs,omitempty"`
-	// ManagedBy indicates which controller is responsible for reconciling
-	// this resource. If unset or set to "tekton.dev/pipeline", the default
-	// Tekton controller will manage this resource.
-	// This field is immutable.
-	// +optional
-	ManagedBy *string `json:"managedBy,omitempty"`
 }
 
 // TimeoutFields allows granular specification of pipeline, task, and finally timeouts
@@ -604,7 +593,7 @@ type PipelineRunList struct {
 	metav1.TypeMeta `json:",inline"`
 	// +optional
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []PipelineRun `json:"items"`
+	Items           []PipelineRun `json:"items,omitempty"`
 }
 
 // PipelineTaskRun reports the results of running a step in the Task. Each

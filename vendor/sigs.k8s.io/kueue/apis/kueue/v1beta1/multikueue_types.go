@@ -45,13 +45,13 @@ const (
 )
 
 type KubeConfig struct {
-	// location of the KubeConfig.
+	// Location of the KubeConfig.
 	//
 	// If LocationType is Secret then Location is the name of the secret inside the namespace in
 	// which the kueue controller manager is running. The config should be stored in the "kubeconfig" key.
 	Location string `json:"location"`
 
-	// locationType of the KubeConfig.
+	// Type of the KubeConfig location.
 	//
 	// +kubebuilder:default=Secret
 	// +kubebuilder:validation:Enum=Secret;Path
@@ -59,28 +59,11 @@ type KubeConfig struct {
 }
 
 type MultiKueueClusterSpec struct {
-	// kubeConfig is information on how to connect to the cluster.
+	// Information how to connect to the cluster.
 	KubeConfig KubeConfig `json:"kubeConfig"`
-
-	// clusterProfileRef is the reference to the ClusterProfile object used to connect to the cluster.
-	//
-	// This is only used to prevent data loss when converting between v1beta2 and v1beta1.
-	// It has no effect in v1beta1.
-	// +optional
-	ClusterProfileRef *ClusterProfileReference `json:"clusterProfileRef,omitempty"`
-}
-
-type ClusterProfileReference struct {
-	// name of the ClusterProfile.
-	// +kubebuilder:validation:MaxLength=256
-	// +kubebuilder:validation:MinLength=1
-	// +required
-	Name string `json:"name,omitempty"`
 }
 
 type MultiKueueClusterStatus struct {
-	// conditions hold the latest available observations of the MultiKueueCluster
-	// current state.
 	// +optional
 	// +listType=map
 	// +listMapKey=type
@@ -92,7 +75,7 @@ type MultiKueueClusterStatus struct {
 // +genclient
 // +genclient:nonNamespaced
 // +kubebuilder:object:root=true
-// +kubebuilder:deprecatedversion:warning="This version is deprecated. Use v1beta2 instead."
+// +kubebuilder:storageversion
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster
 
@@ -100,14 +83,10 @@ type MultiKueueClusterStatus struct {
 // +kubebuilder:printcolumn:name="Age",JSONPath=".metadata.creationTimestamp",type="date",description="Time this workload was created"
 // MultiKueueCluster is the Schema for the multikueue API
 type MultiKueueCluster struct {
-	metav1.TypeMeta `json:",inline"`
-	// metadata is the metadata of the MultiKueueCluster.
+	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	// spec is the specification of the MultiKueueCluster.
-	Spec MultiKueueClusterSpec `json:"spec,omitempty"`
-
-	// status is the status of the MultiKueueCluster.
+	Spec   MultiKueueClusterSpec   `json:"spec,omitempty"`
 	Status MultiKueueClusterStatus `json:"status,omitempty"`
 }
 
@@ -122,26 +101,25 @@ type MultiKueueClusterList struct {
 
 // MultiKueueConfigSpec defines the desired state of MultiKueueConfig
 type MultiKueueConfigSpec struct {
-	// clusters is a list of MultiKueueClusters names where the workloads from the ClusterQueue should be distributed.
+	// List of MultiKueueClusters names where the workloads from the ClusterQueue should be distributed.
 	//
 	// +listType=set
 	// +kubebuilder:validation:MinItems=1
-	// +kubebuilder:validation:MaxItems=20
+	// +kubebuilder:validation:MaxItems=10
 	Clusters []string `json:"clusters"`
 }
 
 // +genclient
 // +genclient:nonNamespaced
 // +kubebuilder:object:root=true
+// +kubebuilder:storageversion
 // +kubebuilder:resource:scope=Cluster
 
 // MultiKueueConfig is the Schema for the multikueue API
 type MultiKueueConfig struct {
-	metav1.TypeMeta `json:",inline"`
-	// metadata is the metadata of the MultiKueueConfig.
+	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	// spec is the specification of the MultiKueueConfig.
 	Spec MultiKueueConfigSpec `json:"spec,omitempty"`
 }
 

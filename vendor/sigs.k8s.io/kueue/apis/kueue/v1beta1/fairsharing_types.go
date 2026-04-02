@@ -24,6 +24,10 @@ import (
 
 // FairSharing contains the properties of the ClusterQueue or Cohort,
 // when participating in FairSharing.
+//
+// Fair Sharing is compatible with Hierarchical Cohorts (any Cohort
+// which has a parent) as of v0.11. Using these features together in
+// V0.9 and V0.10 is unsupported, and results in undefined behavior.
 type FairSharing struct {
 	// weight gives a comparative advantage to this ClusterQueue
 	// or Cohort when competing for unused resources in the
@@ -42,7 +46,7 @@ type FairSharing struct {
 
 // FairSharingStatus contains the information about the current status of Fair Sharing.
 type FairSharingStatus struct {
-	// weightedShare represents the maximum of the ratios of usage
+	// WeightedShare represents the maximum of the ratios of usage
 	// above nominal quota to the lendable resources in the
 	// Cohort, among all the resources provided by the Node, and
 	// divided by the weight.  If zero, it means that the usage of
@@ -57,19 +61,19 @@ type FairSharingStatus struct {
 }
 
 type AdmissionFairSharingStatus struct {
-	// consumedResources represents the aggregated usage of resources over time,
+	// ConsumedResources represents the aggregated usage of resources over time,
 	// with decaying function applied.
 	// The value is populated if usage consumption functionality is enabled in Kueue config.
 	// +required
 	ConsumedResources corev1.ResourceList `json:"consumedResources"`
 
-	// lastUpdate is the time when share and consumed resources were updated.
+	// LastUpdate is the time when share and consumed resources were updated.
 	// +required
 	LastUpdate metav1.Time `json:"lastUpdate"`
 }
 
 type AdmissionScope struct {
-	// admissionMode indicates which mode for AdmissionFairSharing should be used
+	// AdmissionMode indicates which mode for AdmissionFairSharing should be used
 	// in the AdmissionScope. Possible values are:
 	// - UsageBasedAdmissionFairSharing
 	// - NoAdmissionFairSharing

@@ -23,14 +23,13 @@ import (
 // +genclient
 // +genclient:nonNamespaced
 // +kubebuilder:object:root=true
-// +kubebuilder:deprecatedversion:warning="This version is deprecated. Use v1beta2 instead."
+// +kubebuilder:storageversion
 // +kubebuilder:resource:scope=Cluster
 // +kubebuilder:printcolumn:name="Value",JSONPath=".value",type=integer,description="Value of workloadPriorityClass's Priority"
 
 // WorkloadPriorityClass is the Schema for the workloadPriorityClass API
 type WorkloadPriorityClass struct {
-	metav1.TypeMeta `json:",inline"`
-	// metadata is the metadata of the WorkloadPriorityClass.
+	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
 	// value represents the integer value of this workloadPriorityClass. This is the actual priority that workloads

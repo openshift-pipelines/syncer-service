@@ -56,7 +56,6 @@ type LocalQueueSpec struct {
 	FairSharing *FairSharing `json:"fairSharing,omitempty"`
 }
 
-// Deprecated: LocalQueueFlavorStatus is deprecated and marked for removal in v1beta2.
 type LocalQueueFlavorStatus struct {
 	// name of the flavor.
 	// +required
@@ -85,7 +84,7 @@ type LocalQueueFlavorStatus struct {
 
 	// topology is the topology that associated with this ResourceFlavor.
 	//
-	// This is a beta field and requires enabling the TopologyAwareScheduling
+	// This is an alpha field and requires enabling the TopologyAwareScheduling
 	// feature gate.
 	//
 	// +optional
@@ -105,22 +104,13 @@ type TopologyInfo struct {
 	// +listType=atomic
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:MinItems=1
-	// +kubebuilder:validation:MaxItems=16
+	// +kubebuilder:validation:MaxItems=8
 	Levels []string `json:"levels"`
 }
 
 // LocalQueueStatus defines the observed state of LocalQueue
 type LocalQueueStatus struct {
-	// conditions hold the latest available observations of the LocalQueue
-	// current state.
-	// +optional
-	// +listType=map
-	// +listMapKey=type
-	// +patchStrategy=merge
-	// +patchMergeKey=type
-	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
-
-	// pendingWorkloads is the number of Workloads in the LocalQueue not yet admitted to a ClusterQueue
+	// PendingWorkloads is the number of Workloads in the LocalQueue not yet admitted to a ClusterQueue
 	// +optional
 	PendingWorkloads int32 `json:"pendingWorkloads"`
 
@@ -134,6 +124,15 @@ type LocalQueueStatus struct {
 	// +optional
 	AdmittedWorkloads int32 `json:"admittedWorkloads"`
 
+	// Conditions hold the latest available observations of the LocalQueue
+	// current state.
+	// +optional
+	// +listType=map
+	// +listMapKey=type
+	// +patchStrategy=merge
+	// +patchMergeKey=type
+	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
+
 	// flavorsReservation are the reserved quotas, by flavor currently in use by the
 	// workloads assigned to this LocalQueue.
 	// +listType=map
@@ -142,7 +141,7 @@ type LocalQueueStatus struct {
 	// +optional
 	FlavorsReservation []LocalQueueFlavorUsage `json:"flavorsReservation"`
 
-	// flavorUsage are the used quotas, by flavor currently in use by the
+	// flavorsUsage are the used quotas, by flavor currently in use by the
 	// workloads assigned to this LocalQueue.
 	// +listType=map
 	// +listMapKey=name
@@ -155,11 +154,9 @@ type LocalQueueStatus struct {
 	// +listMapKey=name
 	// +kubebuilder:validation:MaxItems=16
 	// +optional
-	//
-	// Deprecated: Flavors is deprecated and marked for removal in v1beta2.
 	Flavors []LocalQueueFlavorStatus `json:"flavors,omitempty"`
 
-	// fairSharing contains the information about the current status of fair sharing.
+	// FairSharing contains the information about the current status of fair sharing.
 	// +optional
 	FairSharing *FairSharingStatus `json:"fairSharing,omitempty"`
 }
@@ -191,7 +188,7 @@ type LocalQueueResourceUsage struct {
 
 // +genclient
 // +kubebuilder:object:root=true
-// +kubebuilder:deprecatedversion:warning="This version is deprecated. Use v1beta2 instead."
+// +kubebuilder:storageversion
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="ClusterQueue",JSONPath=".spec.clusterQueue",type=string,description="Backing ClusterQueue"
 // +kubebuilder:printcolumn:name="Pending Workloads",JSONPath=".status.pendingWorkloads",type=integer,description="Number of pending workloads"
@@ -200,13 +197,10 @@ type LocalQueueResourceUsage struct {
 
 // LocalQueue is the Schema for the localQueues API
 type LocalQueue struct {
-	metav1.TypeMeta `json:",inline"`
-	// metadata is the metadata of the LocalQueue.
+	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	// spec is the specification of the LocalQueue.
-	Spec LocalQueueSpec `json:"spec,omitempty"`
-	// status is the status of the LocalQueue.
+	Spec   LocalQueueSpec   `json:"spec,omitempty"`
 	Status LocalQueueStatus `json:"status,omitempty"`
 }
 
