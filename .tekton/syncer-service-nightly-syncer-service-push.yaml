@@ -1,0 +1,50 @@
+# Generated for Konflux Application syncer-service by openshift-pipelines/hack. DO NOT EDIT
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  annotations:
+    pipelinesascode.tekton.dev/cancel-in-progress: "true" # Cancel in-progress pipelines
+    pipelinesascode.tekton.dev/pipeline: "https://raw.githubusercontent.com/openshift-pipelines/operator/refs/heads/next/.tekton/docker-build-ta.yaml"
+    build.appstudio.openshift.io/repo: https://github.com/openshift-pipelines/syncer-service.git?rev={{revision}}
+    build.appstudio.redhat.com/commit_sha: '{{revision}}'
+    build.appstudio.redhat.com/target_branch: '{{target_branch}}'
+    pipelinesascode.tekton.dev/max-keep-runs: "3"
+    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
+      == "main" &&
+      ("***".pathChanged() ||
+      "Dockerfile".pathChanged() ||
+      ".tekton/syncer-service-nightly-syncer-service-push.yaml".pathChanged())
+  creationTimestamp: null
+  labels:
+    appstudio.openshift.io/application: syncer-service-nightly
+    appstudio.openshift.io/component: syncer-service-nightly-syncer-service
+    pipelines.appstudio.openshift.io/type: build
+  name: syncer-service-nightly-syncer-service-on-push
+  namespace: tekton-ecosystem-tenant
+spec:
+  params:
+  - name: git-url
+    value: '{{source_url}}'
+  - name: upstream-git-url
+    value: 'https://github.com/'
+  - name: revision
+    value: '{{revision}}'
+  - name: output-image
+    value: quay.io/redhat-user-workloads/tekton-ecosystem-tenant/syncer-service-rhel9:{{revision}}
+  - name: dockerfile
+    value: Dockerfile
+  - name: additional-tags
+    value:
+      - "vnightly"
+  - name: prefetch-input
+    value: |
+      {"type": "rpm", "path": ".konflux/rpms"}
+  pipelineRef:
+    name: docker-build-ta
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-syncer-service-nightly-syncer-service
+  workspaces:
+  - name: git-auth
+    secret:
+      secretName: '{{ git_auth_secret }}'
+status: {}
