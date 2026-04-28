@@ -4,7 +4,7 @@ go 1.25.7
 
 require (
 	github.com/tektoncd/pipeline v1.11.0
-	go.uber.org/zap v1.27.1
+	go.uber.org/zap v1.28.0
 	gotest.tools/v3 v3.5.2
 	k8s.io/api v0.35.3
 	k8s.io/apimachinery v0.35.3
