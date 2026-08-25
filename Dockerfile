@@ -27,7 +27,7 @@ ENTRYPOINT ["/workload-controller"]
 
 LABEL \
     com.redhat.component="openshift-syncer-service-rhel9-container" \
-    cpe="cpe:/a:redhat:openshift_pipelines:0.1::el9" \
+    cpe="cpe:/a:redhat:openshift_pipelines:0.1::" \
     description="Red Hat OpenShift Pipelines syncer-service syncer-service" \
     io.k8s.description="Red Hat OpenShift Pipelines syncer-service syncer-service" \
     io.k8s.display-name="Red Hat OpenShift Pipelines syncer-service syncer-service" \
