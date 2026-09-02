@@ -102,7 +102,7 @@ The controller requires access to:
 
 - Kueue Workloads (read and watch)
 - Tekton PipelineRuns (read and watch)
-- Secrets (full access for syncing across clusters)
+- Secrets (read access on the hub; spoke writes use spoke-cluster credentials)
 - MultiKueueClusters (read for cluster connection details)
 - ConfigMaps and Leases (for controller configuration and leader election)
 

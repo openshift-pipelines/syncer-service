@@ -56,22 +56,13 @@ rules:
       - get
       - list
       - watch
-  # Permissions for Secrets (if needed for syncing)
+  # Read source and worker kubeconfig Secrets from the hub cluster
   - apiGroups:
       - ""
     resources:
       - secrets
-      - configmaps
-      - persistentvolumeclaims
-      - serviceaccounts
     verbs:
       - get
-      - list
-      - watch
-      - create
-      - update
-      - patch
-      - delete
   # Permissions for Events (for status reporting)
   - apiGroups:
       - ""
