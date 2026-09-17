@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1alpha1
+package v1beta1
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -74,7 +74,14 @@ const (
 	// PodSet is admitted using TopologyAwareScheduling, and all Pods created
 	// from the Job's PodTemplate also have the label. For the Pod-based
 	// integrations the label is added in webhook during the Pod creation.
+	// Depracted. This label is no longer added by TAS to Pod. The constant is
+	// only kept to support "reading" the label until 0.16.
 	TASLabel = "kueue.x-k8s.io/tas"
+
+	// PodIndexOffsetAnnotation is an annotation on the Pod's metadata
+	// belonging to a Workload. It indicates an offset which represents starting index number
+	// within the same replica.
+	PodIndexOffsetAnnotation = "kueue.x-k8s.io/pod-index-offset"
 
 	// PodGroupPodIndexLabel is a label set on the Pod's metadata belonging
 	// to a Pod group. It indicates the Pod's index within the group.
@@ -84,10 +91,6 @@ const (
 	// belonging to a Pod group. It indicates a label name used to retrieve
 	// the Pod's index within the group.
 	PodGroupPodIndexLabelAnnotation = "kueue.x-k8s.io/pod-group-pod-index-label"
-
-	// NodeToReplaceAnnotation is an annotation on a Workload. It holds a
-	// name of a failed node running at least one pod of this workload.
-	NodeToReplaceAnnotation = "alpha.kueue.x-k8s.io/node-to-replace"
 
 	// PodSetGroupName is an annotation indicating the name of the group of PodSets. PodSet Group
 	// is a unit flavor assignment and topology domain fitting.
@@ -133,10 +136,11 @@ type TopologyLevel struct {
 
 // Topology is the Schema for the topology API
 type Topology struct {
-	metav1.TypeMeta   `json:",inline"`
+	metav1.TypeMeta `json:",inline"`
+	// metadata is the metadata of the Topology.
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	// +kubebuilder:validation:Required
+	// spec is the specification of the Topology.
 	Spec TopologySpec `json:"spec,omitempty"`
 }
 
