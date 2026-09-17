@@ -11,6 +11,7 @@ require (
 	k8s.io/client-go v0.35.5
 	knative.dev/pkg v0.0.0-20260318013857-98d5a706d4fd
 	sigs.k8s.io/kueue v0.13.5
+	sigs.k8s.io/yaml v1.6.0
 )
 
 require (
@@ -98,5 +99,4 @@ require (
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.7.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v6 v6.3.0 // indirect
-	sigs.k8s.io/yaml v1.6.0 // indirect
 )
