@@ -1060,21 +1060,20 @@ knative.dev/pkg/version
 knative.dev/pkg/webhook
 knative.dev/pkg/webhook/certificates/resources
 knative.dev/pkg/webhook/resourcesemantics
-# sigs.k8s.io/controller-runtime v0.21.0
+# sigs.k8s.io/controller-runtime v0.22.3
 ## explicit; go 1.24.0
 sigs.k8s.io/controller-runtime/pkg/scheme
 # sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730
 ## explicit; go 1.23
 sigs.k8s.io/json
 sigs.k8s.io/json/internal/golang/encoding/json
-# sigs.k8s.io/kueue v0.13.5
-## explicit; go 1.24.0
+# sigs.k8s.io/kueue v0.14.8
+## explicit; go 1.25.0
 sigs.k8s.io/kueue/apis/kueue/v1alpha1
 sigs.k8s.io/kueue/apis/kueue/v1beta1
 sigs.k8s.io/kueue/apis/visibility/v1beta1
 sigs.k8s.io/kueue/client-go/applyconfiguration
 sigs.k8s.io/kueue/client-go/applyconfiguration/internal
-sigs.k8s.io/kueue/client-go/applyconfiguration/kueue/v1alpha1
 sigs.k8s.io/kueue/client-go/applyconfiguration/kueue/v1beta1
 sigs.k8s.io/kueue/client-go/applyconfiguration/visibility/v1beta1
 sigs.k8s.io/kueue/client-go/clientset/versioned
@@ -1089,23 +1088,15 @@ sigs.k8s.io/kueue/client-go/clientset/versioned/typed/visibility/v1beta1/fake
 sigs.k8s.io/kueue/client-go/informers/externalversions
 sigs.k8s.io/kueue/client-go/informers/externalversions/internalinterfaces
 sigs.k8s.io/kueue/client-go/informers/externalversions/kueue
-sigs.k8s.io/kueue/client-go/informers/externalversions/kueue/v1alpha1
 sigs.k8s.io/kueue/client-go/informers/externalversions/kueue/v1beta1
 sigs.k8s.io/kueue/client-go/informers/externalversions/visibility
 sigs.k8s.io/kueue/client-go/informers/externalversions/visibility/v1beta1
-sigs.k8s.io/kueue/client-go/listers/kueue/v1alpha1
 sigs.k8s.io/kueue/client-go/listers/kueue/v1beta1
 sigs.k8s.io/kueue/client-go/listers/visibility/v1beta1
 # sigs.k8s.io/randfill v1.0.0
 ## explicit; go 1.18
 sigs.k8s.io/randfill
 sigs.k8s.io/randfill/bytesource
-# sigs.k8s.io/structured-merge-diff/v4 v4.7.0
-## explicit; go 1.13
-sigs.k8s.io/structured-merge-diff/v4/fieldpath
-sigs.k8s.io/structured-merge-diff/v4/schema
-sigs.k8s.io/structured-merge-diff/v4/typed
-sigs.k8s.io/structured-merge-diff/v4/value
 # sigs.k8s.io/structured-merge-diff/v6 v6.3.0
 ## explicit; go 1.23
 sigs.k8s.io/structured-merge-diff/v6/fieldpath
@@ -1116,4 +1107,3 @@ sigs.k8s.io/structured-merge-diff/v6/value
 # sigs.k8s.io/yaml v1.6.0
 ## explicit; go 1.22
 sigs.k8s.io/yaml
-sigs.k8s.io/yaml/goyaml.v2
