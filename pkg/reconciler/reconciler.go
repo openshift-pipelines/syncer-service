@@ -9,6 +9,7 @@ import (
 	v1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
 	tektonversioned2 "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -130,14 +131,14 @@ func (r *Reconciler) Reconcile(ctx context.Context, key string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	if secretName == "" {
 		return nil
 	}
 
-	err = r.createSecretOnSpokeCluster(ctx, secretName, *workload.Status.ClusterName, spokeKubeClient, pipelineRun)
+	err = r.syncSecretToSpokeCluster(ctx, secretName, *workload.Status.ClusterName, spokeKubeClient, pipelineRun)
 	if err != nil {
-		logger.Errorf("error creating secret %s/%s on spoke cluster %s: %v", pipelineRun.GetNamespace(), secretName, *workload.Status.ClusterName, err)
+		logger.Errorf("error syncing secret %s/%s to spoke cluster %s: %v", pipelineRun.GetNamespace(), secretName, *workload.Status.ClusterName, err)
 		return err
 	}
 
@@ -175,7 +176,7 @@ func (r *Reconciler) validatePLRAndGetSecretName(ctx context.Context, spokeTekto
 	return secretName, pipelineRun, nil
 }
 
-func (r *Reconciler) createSecretOnSpokeCluster(ctx context.Context, secretName string, clusterName string, spokeKubeClient *kubernetes.Clientset, pipelineRun *v1.PipelineRun) error {
+func (r *Reconciler) syncSecretToSpokeCluster(ctx context.Context, secretName string, clusterName string, spokeKubeClient kubernetes.Interface, pipelineRun *v1.PipelineRun) error {
 	secret, err := r.hubKubeClient.CoreV1().Secrets(pipelineRun.GetNamespace()).Get(ctx, secretName, metav1.GetOptions{})
 	if err != nil {
 		r.logger.Errorf("error getting secret %s/%s for PipelineRun %s: %v", pipelineRun.GetNamespace(), secretName, pipelineRun.GetName(), err)
@@ -206,13 +207,35 @@ func (r *Reconciler) createSecretOnSpokeCluster(ctx context.Context, secretName 
 		}
 	}
 
-	_, err = spokeKubeClient.CoreV1().Secrets(newSecret.Namespace).Create(ctx, newSecret, metav1.CreateOptions{})
-	if err != nil && !errors.IsAlreadyExists(err) {
+	secrets := spokeKubeClient.CoreV1().Secrets(newSecret.Namespace)
+	if _, err := secrets.Create(ctx, newSecret, metav1.CreateOptions{}); err == nil {
+		r.logger.Infof("successfully created secret %s/%s on spoke cluster %s", newSecret.Namespace, newSecret.Name, clusterName)
+		return nil
+	} else if !errors.IsAlreadyExists(err) {
 		r.logger.Errorf("error creating secret %s/%s: %v", newSecret.Namespace, newSecret.Name, err)
 		return err
 	}
 
-	r.logger.Infof("successfully created secret %s/%s on spoke cluster %s", newSecret.Namespace, newSecret.Name, clusterName)
+	existing, err := secrets.Get(ctx, newSecret.Name, metav1.GetOptions{})
+	if err != nil {
+		r.logger.Errorf("error getting existing secret %s/%s: %v", newSecret.Namespace, newSecret.Name, err)
+		return err
+	}
+	if existing.Type == newSecret.Type && equality.Semantic.DeepEqual(existing.Data, newSecret.Data) {
+		r.logger.Infof("secret %s/%s is already up to date on spoke cluster %s", newSecret.Namespace, newSecret.Name, clusterName)
+		return nil
+	}
+
+	// The hub owns the Secret payload; preserve spoke metadata and resourceVersion.
+	updated := existing.DeepCopy()
+	updated.Type = newSecret.Type
+	updated.Data = newSecret.Data
+	if _, err := secrets.Update(ctx, updated, metav1.UpdateOptions{}); err != nil {
+		r.logger.Errorf("error updating secret %s/%s: %v", newSecret.Namespace, newSecret.Name, err)
+		return err
+	}
+
+	r.logger.Infof("successfully updated secret %s/%s on spoke cluster %s", newSecret.Namespace, newSecret.Name, clusterName)
 	return nil
 }
 
