@@ -9,11 +9,11 @@ require (
 	k8s.io/api v0.35.3
 	k8s.io/apimachinery v0.35.3
 	k8s.io/client-go v0.35.3
-	knative.dev/pkg v0.0.0-20260329160701-396dbaacd652
+	knative.dev/pkg v0.0.0-20260918182429-5dc1978f0042
 	sigs.k8s.io/kueue v0.17.0
 )
 
-replace knative.dev/pkg => knative.dev/pkg v0.0.0-20250415155312-ed3e2158b883
+replace knative.dev/pkg => knative.dev/pkg v0.0.0-20260918182429-5dc1978f0042
 
 require (
 	cel.dev/expr v0.25.1 // indirect
