@@ -10,7 +10,7 @@ require (
 	k8s.io/apimachinery v0.35.3
 	k8s.io/client-go v0.35.3
 	knative.dev/pkg v0.0.0-20260329160701-396dbaacd652
-	sigs.k8s.io/kueue v0.17.0
+	sigs.k8s.io/kueue v0.19.5
 )
 
 replace knative.dev/pkg => knative.dev/pkg v0.0.0-20250415155312-ed3e2158b883
