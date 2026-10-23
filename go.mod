@@ -1,6 +1,6 @@
 module github.com/openshift-pipelines/syncer-service
 
-go 1.26
+go 1.26.10
 
 require (
 	github.com/tektoncd/pipeline v1.9.3 // Keep it 1.9.x only
