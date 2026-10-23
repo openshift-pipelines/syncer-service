@@ -20,9 +20,7 @@ import (
 	"strings"
 )
 
-var (
-	templateReplaceCaptureRE = regexp.MustCompile(`\$\{?([a-zA-Z0-9_\$]+)\}?`)
-)
+var templateReplaceCaptureRE = regexp.MustCompile(`\$\{?([a-zA-Z0-9_\$]+)\}?`)
 
 type TemplateFormatter struct {
 	captureIndexes []int
@@ -43,13 +41,14 @@ func NewTemplateFormatter(template string, captureCount int) *TemplateFormatter 
 	valueFormatter := template
 	for _, match := range matches {
 		idx, err := strconv.Atoi(match[len(match)-1])
-		if err != nil || idx > captureCount || idx < 1 {
+		if err != nil || idx > captureCount || idx < 0 {
 			// if index larger than captured count or using unsupported named capture group,
 			// replace with empty string
-			valueFormatter = strings.Replace(valueFormatter, match[0], "", -1)
+			valueFormatter = strings.ReplaceAll(valueFormatter, match[0], "")
 		} else {
-			valueFormatter = strings.Replace(valueFormatter, match[0], "%s", -1)
-			// note: the regex reference variable $? starts from 1
+			valueFormatter = strings.ReplaceAll(valueFormatter, match[0], "%s")
+			// note: the regex reference variable $? starts from 1, $0 refers to the
+			// original metric name and is represented here as index -1
 			indexes = append(indexes, idx-1)
 		}
 	}
@@ -60,9 +59,11 @@ func NewTemplateFormatter(template string, captureCount int) *TemplateFormatter 
 	}
 }
 
-// Format accepts a list containing captured strings and returns the formatted
-// string using the template stored in current TemplateFormatter.
-func (formatter *TemplateFormatter) Format(captures []string) string {
+// Format accepts the original metric name and a list containing captured
+// strings, and returns the formatted string using the template stored in
+// current TemplateFormatter. $0 refers to the original metric name, $1
+// onwards refer to the captured strings.
+func (formatter *TemplateFormatter) Format(metricName string, captures []string) string {
 	if formatter.captureCount == 0 {
 		// no label substitution, keep as it is
 		return formatter.fmtString
@@ -70,7 +71,11 @@ func (formatter *TemplateFormatter) Format(captures []string) string {
 	indexes := formatter.captureIndexes
 	vargs := make([]interface{}, formatter.captureCount)
 	for i, idx := range indexes {
-		vargs[i] = captures[idx]
+		if idx == -1 {
+			vargs[i] = metricName
+		} else {
+			vargs[i] = captures[idx]
+		}
 	}
 	return fmt.Sprintf(formatter.fmtString, vargs...)
 }
